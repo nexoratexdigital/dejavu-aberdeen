@@ -1,0 +1,7 @@
+{
+  "name": "Deja Vu Nightclub - Aberdeen",
+  "description": "A sophisticated Afro/African club celebrating sound, style, and culture in Aberdeen, UK. Featuring Afrobeats, Amapiano, and Dancehall in a premium atmosphere.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
