@@ -19,6 +19,15 @@ const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  // Prevent background scrolling when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [isOpen]);
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -28,36 +37,36 @@ const Navbar: React.FC = () => {
   }, []);
 
   return (
-    <nav className={`fixed w-full z-[60] transition-all duration-500 ${
+    <nav className={`fixed w-full z-[100] transition-all duration-500 ${
       scrolled ? 'py-4 backdrop-blur-lg bg-neutral-950/95 shadow-xl shadow-black/20' : 'py-6 bg-transparent'
     }`}>
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
-        <a href="#" className="uppercase z-[70] text-xl font-semibold text-white tracking-tighter mix-blend-difference whitespace-nowrap">
+        <a href="#" className="uppercase z-[110] text-xl font-semibold text-white tracking-tighter mix-blend-difference whitespace-nowrap">
           DEJA VU
         </a>
         
-        {/* Desktop Links - Hidden on Mobile/Tablets below 1024px */}
-        <div className="hidden lg:flex text-[10px] font-medium text-neutral-400 tracking-[0.2em] gap-x-10 uppercase items-center">
+        {/* Desktop Links - Strictly hidden below 1024px */}
+        <div className="hidden lg:flex text-[10px] font-medium text-neutral-400 tracking-[0.2em] gap-x-10 uppercase items-center pointer-events-auto">
           <a href="#" className="hover:text-white transition-colors">Home</a>
           <a href="#portfolio" className="hover:text-white transition-colors">Social Events</a>
           <a href="#studio" className="hover:text-white transition-colors">The Venue</a>
           <a href="#contact" className="hover:text-white transition-colors border border-neutral-800 px-4 py-2 hover:bg-white hover:text-black rounded-full transition-all">Become A Partner</a>
         </div>
 
-        {/* Mobile Toggle */}
+        {/* Mobile Toggle Button */}
         <button 
-          className="lg:hidden text-white z-[70] p-2 focus:outline-none bg-neutral-900/50 rounded-full backdrop-blur-sm"
+          className="lg:hidden text-white z-[110] p-2 focus:outline-none bg-neutral-900/50 rounded-full backdrop-blur-sm border border-white/10"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle Menu"
         >
           {isOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
 
-        {/* Mobile Menu Overlay */}
-        <div className={`fixed inset-0 bg-neutral-950 z-[65] flex flex-col items-center justify-center gap-10 text-3xl font-serif transition-all duration-500 ease-in-out ${
+        {/* Full Screen Mobile Menu Overlay */}
+        <div className={`fixed inset-0 bg-neutral-950 z-[105] flex flex-col items-center justify-center gap-10 text-3xl font-serif transition-all duration-500 ease-in-out ${
           isOpen 
-            ? 'opacity-100 translate-y-0 pointer-events-auto' 
-            : 'opacity-0 -translate-y-full pointer-events-none'
+            ? 'opacity-100 translate-y-0 visible' 
+            : 'opacity-0 -translate-y-full invisible'
         }`}>
           <a href="#" onClick={() => setIsOpen(false)} className="hover:text-white transition-colors italic">Home</a>
           <a href="#portfolio" onClick={() => setIsOpen(false)} className="hover:text-white transition-colors italic text-center">Social Events</a>
