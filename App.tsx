@@ -14,10 +14,20 @@ import {
   Music
 } from 'lucide-react';
 
+// --- Global State Mock (for Menu consistency) ---
+// In a larger app we'd use Context, but for this structure we pass the toggle.
+
 // --- Navbar Component ---
-const Navbar: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const Navbar: React.FC<{ isOpen: boolean; setIsOpen: (val: boolean) => void }> = ({ isOpen, setIsOpen }) => {
   const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Prevent background scrolling when mobile menu is open
   useEffect(() => {
@@ -28,58 +38,60 @@ const Navbar: React.FC = () => {
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   return (
-    <nav className={`fixed w-full z-[100] transition-all duration-500 ${
-      scrolled ? 'py-4 backdrop-blur-lg bg-neutral-950/95 shadow-xl shadow-black/20' : 'py-6 bg-transparent'
-    }`}>
-      <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
-        <a href="#" className="uppercase z-[110] text-xl font-semibold text-white tracking-tighter mix-blend-difference whitespace-nowrap">
-          DEJA VU
-        </a>
-        
-        {/* Desktop Links - Strictly hidden below 1024px */}
-        <div className="hidden lg:flex text-[10px] font-medium text-neutral-400 tracking-[0.2em] gap-x-10 uppercase items-center pointer-events-auto">
-          <a href="#" className="hover:text-white transition-colors">Home</a>
-          <a href="#portfolio" className="hover:text-white transition-colors">Social Events</a>
-          <a href="#studio" className="hover:text-white transition-colors">The Venue</a>
-          <a href="#contact" className="hover:text-white transition-colors border border-neutral-800 px-4 py-2 hover:bg-white hover:text-black rounded-full transition-all">Become A Partner</a>
-        </div>
+    <>
+      <nav className={`fixed w-full z-[100] transition-all duration-500 ${
+        scrolled ? 'py-4 backdrop-blur-lg bg-neutral-950/98 shadow-xl shadow-black/40' : 'py-6 bg-transparent'
+      }`}>
+        <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
+          <a href="#" className="uppercase z-[110] text-xl font-semibold text-white tracking-tighter mix-blend-difference whitespace-nowrap">
+            DEJA VU
+          </a>
+          
+          {/* Desktop Links */}
+          <div className="hidden lg:flex text-[10px] font-medium text-neutral-400 tracking-[0.2em] gap-x-10 uppercase items-center">
+            <a href="#" className="hover:text-white transition-colors">Home</a>
+            <a href="#portfolio" className="hover:text-white transition-colors">Social Events</a>
+            <a href="#studio" className="hover:text-white transition-colors">The Venue</a>
+            <a href="#contact" className="hover:text-white transition-colors border border-neutral-800 px-4 py-2 hover:bg-white hover:text-black rounded-full transition-all">Become A Partner</a>
+          </div>
 
-        {/* Mobile Toggle Button */}
+          {/* Mobile Toggle Button */}
+          <button 
+            className="lg:hidden text-white z-[110] p-2 focus:outline-none bg-neutral-900/80 rounded-full backdrop-blur-sm border border-white/5"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle Menu"
+          >
+            {isOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+      </nav>
+
+      {/* Full Screen Mobile Menu Overlay - Solid and Independent */}
+      <div className={`fixed inset-0 bg-neutral-950 z-[150] flex flex-col items-center justify-center gap-8 text-3xl font-serif transition-all duration-500 ease-in-out ${
+        isOpen 
+          ? 'opacity-100 translate-y-0 visible pointer-events-auto' 
+          : 'opacity-0 -translate-y-full invisible pointer-events-none'
+      }`}>
+        {/* Close Button Inside Menu */}
         <button 
-          className="lg:hidden text-white z-[110] p-2 focus:outline-none bg-neutral-900/50 rounded-full backdrop-blur-sm border border-white/10"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Toggle Menu"
+          onClick={() => setIsOpen(false)}
+          className="absolute top-6 right-6 text-white p-2 bg-neutral-900 rounded-full border border-white/10 lg:hidden"
         >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
+          <X size={24} />
         </button>
 
-        {/* Full Screen Mobile Menu Overlay */}
-        <div className={`fixed inset-0 bg-neutral-950 z-[105] flex flex-col items-center justify-center gap-10 text-3xl font-serif transition-all duration-500 ease-in-out ${
-          isOpen 
-            ? 'opacity-100 translate-y-0 visible' 
-            : 'opacity-0 -translate-y-full invisible'
-        }`}>
-          <a href="#" onClick={() => setIsOpen(false)} className="hover:text-white transition-colors italic">Home</a>
-          <a href="#portfolio" onClick={() => setIsOpen(false)} className="hover:text-white transition-colors italic text-center">Social Events</a>
-          <a href="#studio" onClick={() => setIsOpen(false)} className="hover:text-white transition-colors italic">The Venue</a>
-          <a href="#contact" onClick={() => setIsOpen(false)} className="hover:text-white transition-colors italic">Become A Partner</a>
-          
-          <div className="flex gap-8 mt-12">
-            <a href="https://www.instagram.com/dejavunightclub_/" target="_blank" className="text-neutral-500 hover:text-white"><Instagram size={24} /></a>
-            <a href="#" className="text-neutral-500 hover:text-white"><Facebook size={24} /></a>
-          </div>
+        <a href="#" onClick={() => setIsOpen(false)} className="hover:text-white transition-colors italic">Home</a>
+        <a href="#portfolio" onClick={() => setIsOpen(false)} className="hover:text-white transition-colors italic text-center px-6">Social Events</a>
+        <a href="#studio" onClick={() => setIsOpen(false)} className="hover:text-white transition-colors italic">The Venue</a>
+        <a href="#contact" onClick={() => setIsOpen(false)} className="hover:text-white transition-colors italic text-center px-6">Become A Partner</a>
+        
+        <div className="flex gap-8 mt-12">
+          <a href="https://www.instagram.com/dejavunightclub_/" target="_blank" rel="noopener noreferrer" className="text-neutral-500 hover:text-white transition-transform active:scale-90"><Instagram size={28} /></a>
+          <a href="https://www.facebook.com/share/18F89k5gqA/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="text-neutral-500 hover:text-white transition-transform active:scale-90"><Facebook size={28} /></a>
         </div>
       </div>
-    </nav>
+    </>
   );
 };
 
@@ -372,26 +384,42 @@ const Contact: React.FC = () => {
 };
 
 // --- Footer Component ---
-const Footer: React.FC = () => {
+const Footer: React.FC<{ onMenuOpen: () => void }> = ({ onMenuOpen }) => {
   return (
-    <footer className="bg-neutral-950 border-neutral-900 border-t py-12 px-6">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-8 items-center justify-between">
+    <footer className="bg-neutral-950 border-neutral-900 border-t py-16 px-6">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-12 items-center justify-between">
         <div className="text-center md:text-left">
           <p className="text-xl text-white tracking-tight font-serif uppercase">DEJA VU.</p>
-          <p className="text-[10px] text-neutral-600 mt-1 uppercase">Aberdeen, UK</p>
+          <p className="text-[10px] text-neutral-600 mt-1 uppercase tracking-[0.3em]">Aberdeen, UK</p>
         </div>
 
-        <div className="flex gap-x-6">
-          <a href="https://www.instagram.com/dejavunightclub_?igsh=MXBwOXVkcmR6anphdA==" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors text-neutral-500">
-            <Instagram size={20} className="text-white" />
-          </a>
-          <a href="https://www.facebook.com/share/18F89k5gqA/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors text-neutral-500">
-            <Facebook size={20} className="text-white" />
-          </a>
+        {/* Footer Nav / Menu Trigger */}
+        <div className="flex flex-col items-center gap-6">
+          <button 
+            onClick={onMenuOpen}
+            className="text-[11px] font-semibold text-white tracking-[0.2em] uppercase border-b border-white/20 pb-1 hover:border-white transition-all lg:hidden"
+          >
+            Open Menu
+          </button>
+          <div className="flex gap-x-10 text-[10px] text-neutral-500 uppercase tracking-widest hidden lg:flex">
+             <a href="#" className="hover:text-white transition-colors">Home</a>
+             <a href="#portfolio" className="hover:text-white transition-colors">Events</a>
+             <a href="#studio" className="hover:text-white transition-colors">Venue</a>
+          </div>
         </div>
 
-        <div className="text-[10px] text-neutral-700 font-medium uppercase">
-          © {new Date().getFullYear()} Deja Vu. All rights reserved.
+        <div className="flex flex-col items-center md:items-end gap-6">
+          <div className="flex gap-x-8">
+            <a href="https://www.instagram.com/dejavunightclub_/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-all text-neutral-500 hover:scale-110">
+              <Instagram size={20} />
+            </a>
+            <a href="https://www.facebook.com/share/18F89k5gqA/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-all text-neutral-500 hover:scale-110">
+              <Facebook size={20} />
+            </a>
+          </div>
+          <div className="text-[9px] text-neutral-700 font-medium uppercase tracking-[0.1em]">
+            © {new Date().getFullYear()} Deja Vu. Crafted for the Culture.
+          </div>
         </div>
       </div>
     </footer>
@@ -400,9 +428,11 @@ const Footer: React.FC = () => {
 
 // --- Main App Component ---
 export default function App() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <div className="bg-neutral-950 min-h-screen selection:bg-white selection:text-black">
-      <Navbar />
+      <Navbar isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
       <Hero />
       <Statement />
       <Portfolio />
@@ -410,7 +440,7 @@ export default function App() {
       <Studio />
       <Testimonials />
       <Contact />
-      <Footer />
+      <Footer onMenuOpen={() => setIsMenuOpen(true)} />
     </div>
   );
 }
