@@ -7,7 +7,6 @@ import {
   MapPin, 
   ShieldCheck, 
   Quote, 
-  UploadCloud, 
   ArrowRight,
   Instagram,
   Facebook,
@@ -24,39 +23,51 @@ const Navbar: React.FC = () => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${
-      scrolled ? 'py-4 backdrop-blur-md bg-neutral-950/90' : 'py-6 bg-transparent'
+    <nav className={`fixed w-full z-[60] transition-all duration-500 ${
+      scrolled ? 'py-4 backdrop-blur-lg bg-neutral-950/95 shadow-xl shadow-black/20' : 'py-6 bg-transparent'
     }`}>
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
-        <a href="#" className="uppercase z-50 text-xl font-semibold text-white tracking-tighter mix-blend-difference">
+        <a href="#" className="uppercase z-[70] text-xl font-semibold text-white tracking-tighter mix-blend-difference whitespace-nowrap">
           DEJA VU
         </a>
         
-        <div className="hidden md:flex text-sm font-medium text-neutral-300 tracking-wide gap-x-8">
+        {/* Desktop Links - Hidden on Mobile/Tablets below 1024px */}
+        <div className="hidden lg:flex text-[10px] font-medium text-neutral-400 tracking-[0.2em] gap-x-10 uppercase items-center">
           <a href="#" className="hover:text-white transition-colors">Home</a>
           <a href="#portfolio" className="hover:text-white transition-colors">Social Events</a>
           <a href="#studio" className="hover:text-white transition-colors">The Venue</a>
-          <a href="#contact" className="hover:text-white transition-colors">Become A Partner</a>
+          <a href="#contact" className="hover:text-white transition-colors border border-neutral-800 px-4 py-2 hover:bg-white hover:text-black rounded-full transition-all">Become A Partner</a>
         </div>
 
+        {/* Mobile Toggle */}
         <button 
-          className="md:hidden text-white z-50 focus:outline-none"
+          className="lg:hidden text-white z-[70] p-2 focus:outline-none bg-neutral-900/50 rounded-full backdrop-blur-sm"
           onClick={() => setIsOpen(!isOpen)}
+          aria-label="Toggle Menu"
         >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
+          {isOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
 
-        {/* Mobile Menu */}
-        <div className={`fixed inset-0 bg-neutral-950 z-40 flex flex-col items-center justify-center gap-8 text-2xl font-serif transition-transform duration-500 ${isOpen ? 'translate-y-0' : '-translate-y-full'}`}>
+        {/* Mobile Menu Overlay */}
+        <div className={`fixed inset-0 bg-neutral-950 z-[65] flex flex-col items-center justify-center gap-10 text-3xl font-serif transition-all duration-500 ease-in-out ${
+          isOpen 
+            ? 'opacity-100 translate-y-0 pointer-events-auto' 
+            : 'opacity-0 -translate-y-full pointer-events-none'
+        }`}>
           <a href="#" onClick={() => setIsOpen(false)} className="hover:text-white transition-colors italic">Home</a>
-          <a href="#portfolio" onClick={() => setIsOpen(false)} className="hover:text-white transition-colors italic">Social Events</a>
+          <a href="#portfolio" onClick={() => setIsOpen(false)} className="hover:text-white transition-colors italic text-center">Social Events</a>
           <a href="#studio" onClick={() => setIsOpen(false)} className="hover:text-white transition-colors italic">The Venue</a>
           <a href="#contact" onClick={() => setIsOpen(false)} className="hover:text-white transition-colors italic">Become A Partner</a>
+          
+          <div className="flex gap-8 mt-12">
+            <a href="https://www.instagram.com/dejavunightclub_/" target="_blank" className="text-neutral-500 hover:text-white"><Instagram size={24} /></a>
+            <a href="#" className="text-neutral-500 hover:text-white"><Facebook size={24} /></a>
+          </div>
         </div>
       </div>
     </nav>
@@ -236,8 +247,8 @@ const Studio: React.FC = () => {
 
         <div className="space-y-10">
           <div>
-            <h3 className="serif text-3xl text-white tracking-tight mb-4">The Venue</h3>
-            <p className="leading-relaxed text-sm text-neutral-400">
+            <h3 className="serif text-3xl text-white tracking-tight mb-4 text-center lg:text-left uppercase">The Venue</h3>
+            <p className="leading-relaxed text-sm text-neutral-400 text-center lg:text-left">
               A luxury nightclub in the heart of the city, where elegant design, prime location, and an electric atmosphere come together for an unforgettable night.
             </p>
           </div>
@@ -248,7 +259,7 @@ const Studio: React.FC = () => {
                 <ShieldCheck size={18} />
               </div>
               <div>
-                <h5 className="text-white text-sm font-medium mb-1">Premium Security</h5>
+                <h5 className="text-white text-sm font-medium mb-1 uppercase tracking-wider">Premium Security</h5>
                 <p className="text-neutral-500 text-xs leading-relaxed">
                   A safe, inclusive, and professional environment managed by experienced staff.
                 </p>
@@ -260,7 +271,7 @@ const Studio: React.FC = () => {
                 <Star size={18} />
               </div>
               <div>
-                <h5 className="text-white text-sm font-medium mb-1">VIP Service</h5>
+                <h5 className="text-white text-sm font-medium mb-1 uppercase tracking-wider">VIP Service</h5>
                 <p className="text-neutral-500 text-xs leading-relaxed">
                   Exclusive table service and premium offerings for an elevated celebration.
                 </p>
@@ -272,7 +283,7 @@ const Studio: React.FC = () => {
                 <Music size={18} />
               </div>
               <div>
-                <h5 className="text-white text-sm font-medium mb-1">Crystal Audio</h5>
+                <h5 className="text-white text-sm font-medium mb-1 uppercase tracking-wider">Crystal Audio</h5>
                 <p className="text-neutral-500 text-xs leading-relaxed">
                   State-of-the-art sound systems engineered for the best Afro-Carib beats.
                 </p>
@@ -381,7 +392,7 @@ const Footer: React.FC = () => {
 // --- Main App Component ---
 export default function App() {
   return (
-    <div className="bg-neutral-950 min-h-screen">
+    <div className="bg-neutral-950 min-h-screen selection:bg-white selection:text-black">
       <Navbar />
       <Hero />
       <Statement />
